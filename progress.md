@@ -16,3 +16,5 @@ Connecting usb-to-rs232 port to nuc, shows the following 3 devices:
 ```
 Bus 001 Device 004: ID 148f:3572 Ralink Technology, Corp. RT3572 Wireless Adapter
 ```
+
+Look at https://github.com/clayton-r/Hantek-Power-Supply-Controller/blob/master/Utils.py for ideas.
