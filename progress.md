@@ -1,4 +1,10 @@
-Connecting usb-to-rs232 port to computer, shows the following 3 devices:
+Setup:
+
+* Using [USB-to-RS232](https://s.click.aliexpress.com/e/_DCOVD2J) adapter. Connected to [HDP1160V4S](https://s.click.aliexpress.com/e/_DCkHtB1) PSU.
+* Intel NUC running Proxmox 7.4.
+
+Connecting usb-to-rs232 port to nuc, shows the following 3 devices:
+
 ```
 /dev/gpiochip0
 /dev/serial
