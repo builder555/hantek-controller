@@ -48,3 +48,26 @@ if __name__ == '__main__':
 ```
 
 Tested the output of RS232 cable with oscilloscope - TX is coming through.
+
+## Breakthrough
+
+after monitoring the serial communication between the Hantek app and the PSU, this code works to read the device model:
+
+```python
+import serial
+
+# Hex data to send
+hex_data = "ff ff 02 20 ff ff 02 15 ff ff 02 16 ff ff 02 09"
+byte_data = bytes.fromhex(hex_data)
+
+# Serial port configuration
+port = "/dev/ttyUSB0"
+baudrate = 2400
+
+# Initialize serial connection
+with serial.Serial(port, baudrate, timeout=3) as ser:
+    ser.write(byte_data)
+    resp=ser.readline()
+    print("resp:", resp)
+```
+responds with 'HDP1160V4S11400'
