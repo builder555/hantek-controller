@@ -73,3 +73,13 @@ with serial.Serial(port, baudrate, timeout=3) as ser:
     print("resp:", resp)
 ```
 responds with 'HDP1160V4S'
+
+
+## Commands
+(decoded so far)
+
+|hex|meaning|
+|---|-------|
+|ff ff 02 20|get model|
+|ff ff 02 16 ff ff 02 09|get current voltage in centivolts (e.g. '1523' -> 15.23V, '11230' -> 112.3V)|
+|---|-------|
