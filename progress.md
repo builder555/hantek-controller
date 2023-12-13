@@ -36,3 +36,5 @@ s.read(1) # stalls here
 s.write('SYSTem:GET:MODEl?'.encode())
 s.read(1) # stalls here
 ```
+
+Tested the output of RS232 cable with oscilloscope - TX is coming through.
