@@ -59,7 +59,7 @@ after monitoring the serial communication between the Hantek app and the PSU, th
 import serial
 
 # Hex data to send
-hex_data = "ff ff 02 20 ff ff 02 15 ff ff 02 16 ff ff 02 09"
+hex_data = "ff ff 02 20"
 byte_data = bytes.fromhex(hex_data)
 
 # Serial port configuration
@@ -72,4 +72,4 @@ with serial.Serial(port, baudrate, timeout=3) as ser:
     resp=ser.readline()
     print("resp:", resp)
 ```
-responds with 'HDP1160V4S11400'
+responds with 'HDP1160V4S'
