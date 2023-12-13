@@ -29,12 +29,22 @@ test code: (requires `pyserial` package)
 
 ```python
 import serial
-s = serial.Serial(port='/dev/ttyUSB0',baudrate=9600) # tried baud rates 2400, 4800, 9600, 19200, 38400, 57600, 115200
-s.write('*IDN?'.encode())
-s.read(1) # stalls here
-# or:
-s.write('SYSTem:GET:MODEl?'.encode())
-s.read(1) # stalls here
+
+device = '/dev/ttyUSB0'
+
+def send_command(command, baud):
+    s = serial.Serial(port=device, baudrate=baud, timeout=1)
+    s.write(command.encode())
+    resp = s.read(1)
+    s.close()
+    return resp
+
+def main():
+    for baud in [2400, 4800, 9600, 19200, 38400, 57600, 115200]:
+        response=send_command('SYSTem:GET:MODEl?\r', baud) # also tried *IDN? command
+        print('Baudrate: %d, response: %s' % (baud, response))
+if __name__ == '__main__':
+    main()
 ```
 
 Tested the output of RS232 cable with oscilloscope - TX is coming through.
