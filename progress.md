@@ -1,3 +1,5 @@
+![img](psu.jpg)
+
 Setup:
 
 * Using [USB-to-RS232](https://s.click.aliexpress.com/e/_DCOVD2J) adapter. Connected to [HDP1160V4S](https://s.click.aliexpress.com/e/_DCkHtB1) PSU.
