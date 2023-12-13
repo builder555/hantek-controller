@@ -29,7 +29,7 @@ test code: (requires `pyserial` package)
 
 ```python
 import serial
-s = serial.Serial(port='/dev/ttyUSB0',baudrate=9600)
+s = serial.Serial(port='/dev/ttyUSB0',baudrate=9600) #also tried baud rate 2400
 s.write('*IDN?'.encode())
 s.read(1) # stalls here
 # or:
