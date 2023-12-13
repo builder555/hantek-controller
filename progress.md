@@ -14,7 +14,9 @@ Connecting usb-to-rs232 port to nuc, shows the following 3 devices:
 `lsusb` returns:
 
 ```
-Bus 001 Device 004: ID 148f:3572 Ralink Technology, Corp. RT3572 Wireless Adapter
+Bus 001 Device 122: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
 ```
 
 Look at https://github.com/clayton-r/Hantek-Power-Supply-Controller/blob/master/Utils.py for ideas.
+
+It appears that whether the RS232 port is connected to the psu or not the lsusb and /dev/ items are still present.
