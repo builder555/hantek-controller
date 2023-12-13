@@ -81,5 +81,5 @@ responds with 'HDP1160V4S'
 |hex|meaning|
 |---|-------|
 |ff ff 02 20|get model|
-|ff ff 02 09|get current voltage in centivolts (e.g. '1523' -> 15.23V, '11230' -> 112.3V)|
+|ff ff 02 09|get voltage output in centivolts (e.g. '1523' -> 15.23V, '11230' -> 112.3V). when output is off, will return '0'|
 
