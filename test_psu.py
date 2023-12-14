@@ -3,6 +3,11 @@ import pytest
 from psu import PSU
 
 FAKE_MODEL_NUMBER = 'HDP1160V4S'
+FAKE_VOLTAGE = 3.3
+FAKE_VOLTAGE_LIMIT = 5.0
+FAKE_CURRENT = 250
+FAKE_CURRENT_LIMIT = 1200
+FAKE_ON_STATUS = True
 
 @pytest.fixture
 def mocked_serial():
@@ -17,15 +22,15 @@ def mocked_serial():
             if self.__written == bytes.fromhex('ff ff 02 20'):
                 return FAKE_MODEL_NUMBER.encode()
             if self.__written == bytes.fromhex('ff ff 02 09'):
-                return b'330'
+                return str(int(FAKE_VOLTAGE*100)).encode()
             if self.__written == bytes.fromhex('ff ff 02 0a'):
-                return b'250'
+                return str(int(FAKE_CURRENT)).encode()
             if self.__written == bytes.fromhex('ff ff 02 12'):
-                return b'500'
+                return str(int(FAKE_VOLTAGE_LIMIT*100)).encode()
             if self.__written == bytes.fromhex('ff ff 02 13'):
-                return b'1000'
+                return str(int(FAKE_CURRENT_LIMIT)).encode()
             if self.__written == bytes.fromhex('ff ff 02 14'):
-                return b'1'
+                return str(int(FAKE_ON_STATUS)).encode()
             return b''
         def __enter__(self):
             return self
@@ -43,19 +48,19 @@ def test_get_model_number(psu):
     assert psu.get_model() == FAKE_MODEL_NUMBER
 
 def test_get_active_voltage(psu):
-    assert psu.get_active_voltage() == 3.3
+    assert psu.get_active_voltage() == FAKE_VOLTAGE
 
 def test_get_active_current_in_milliamps(psu):
-    assert psu.get_active_current() == 250
+    assert psu.get_active_current() == FAKE_CURRENT
 
 def test_get_voltage_limit(psu):
-    assert psu.get_voltage_limit() == 5.0
+    assert psu.get_voltage_limit() == FAKE_VOLTAGE_LIMIT
 
 def test_get_current_limit_in_milliamps(psu):
-    assert psu.get_current_limit() == 1000
+    assert psu.get_current_limit() == FAKE_CURRENT_LIMIT
 
 def test_get_on_off_status(psu):
-    assert psu.get_on_off_status() == True
+    assert psu.get_on_off_status() == FAKE_ON_STATUS
 
 def test_turn_on(psu, mocked_serial):
     psu.turn_on()
