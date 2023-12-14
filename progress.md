@@ -81,5 +81,21 @@ responds with 'HDP1160V4S'
 |hex|meaning|
 |---|-------|
 |ff ff 02 20|get model|
-|ff ff 02 09|get voltage output in centivolts (e.g. '1523' -> 15.23V, '11230' -> 112.3V). when output is off, will return '0'|
+|ff ff 02 09|get active voltage output in centivolts*. when output is off, will return '0'|
+|ff ff 02 0a|get active current in milliamps|
+|ff ff 02 12|get the voltage limit in centivolts*|
+|ff ff 02 13|get the current limit in milliamps|
+|ff ff 02 14|get on/off status|
+|ff ff 03 06 00|turn off output|
+|ff ff 03 06 01|turn on output|
+|ff ff 04 07 bc 02|set output voltage in little-endian (7.00V here)|
+|ff ff 04 08 3e 01|set output current in little-endian (0.318A here)|
+|ff ff 04 17 3e 01|set OVP|
+|ff ff 04 18 3e 01|set OCP|
+|ff ff 03 1a 01|turn on OCP, 00 - off|
+|ff ff 03 19 01|turn on OVP, 00 - off|
+
+
+
+Centivolts are 100th of a volt: e.g. '1523' -> 15.23V, '11230' -> 112.3V
 
