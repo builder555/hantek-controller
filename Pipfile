@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyserial = "*"
+pyserial-asyncio = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-watch = "*"
+
+[requires]
+python_version = "3"
+
+[scripts]
+test = "pytest -v"
+watch = "ptw --runner 'pytest -v'"
