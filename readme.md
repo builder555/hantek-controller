@@ -2,7 +2,7 @@
 
 ![img](psu.jpg)
 
-This is an interface to the serial port on [Hantek HDP1160V4S](https://s.click.aliexpress.com/e/_DCkHtB1) power supply. It should work with other HDP1000-series power supplies. 
+This is an interface to the serial port on [Hantek HDP1160V4S](http://www.hantek.com/products/detail/18193) power supply. It should work with other HDP10000-series power supplies. [buy](https://s.click.aliexpress.com/e/_DCkHtB1)
 
 > [!CAUTION]
 > **NB:** USING THIS CODE MAY DAMAGE YOUR POWER SUPPLY OR ATTACHED DEVICES. <br/>
