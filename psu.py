@@ -33,49 +33,51 @@ class PSU:
             resp = ser.readline()
         return resp
     
-    def _send_command(self, hex_command: str):
+    def _send_command(self, command: str):
+        hex_command = self.__commands[command]
         byte_data = bytes.fromhex(hex_command)
         self._send_bytes(byte_data)
     
-    def _send_command_and_get_response(self, hex_command: str) -> bytes:
+    def _send_command_and_get_response(self, command: str) -> bytes:
+        hex_command = self.__commands[command]
         byte_data = bytes.fromhex(hex_command)
         return self._send_bytes_with_response(byte_data)
 
     def turn_on(self):
-        self._send_command(self.__commands["turn_on"])
+        self._send_command("turn_on")
 
     def turn_off(self):
-        self._send_command(self.__commands["turn_off"])
-
-    def get_model(self) -> bytes:
-        return self._send_command_and_get_response(self.__commands["get_model"])
-
-    def get_active_voltage(self) -> bytes:
-        return self._send_command_and_get_response(self.__commands["get_active_voltage"])
-
-    def get_active_current(self) -> bytes:
-        return self._send_command_and_get_response(self.__commands["get_active_current"])
-
-    def get_voltage_limit(self) -> bytes:
-        return self._send_command_and_get_response(self.__commands["get_voltage_limit"])
-
-    def get_current_limit(self) -> bytes:
-        return self._send_command_and_get_response(self.__commands["get_current_limit"])
-
-    def get_on_off_status(self) -> bytes:
-        return self._send_command_and_get_response(self.__commands["get_on_off_status"])
+        self._send_command("turn_off")
 
     def ocp_on(self):
-        self._send_command(f"ff ff 03 1a 01")
+        self._send_command('ocp_on')
         
     def ocp_off(self):
-        self._send_command(f"ff ff 03 1a 00")
+        self._send_command('ocp_off')
 
     def ovp_on(self):
-        self._send_command(f"ff ff 03 19 01")
+        self._send_command('ovp_on')
     
     def ovp_off(self):
-        self._send_command(f"ff ff 03 19 00")
+        self._send_command('ovp_off')
+
+    def get_model(self) -> bytes:
+        return self._send_command_and_get_response("get_model")
+
+    def get_active_voltage(self) -> bytes:
+        return self._send_command_and_get_response("get_active_voltage")
+
+    def get_active_current(self) -> bytes:
+        return self._send_command_and_get_response("get_active_current")
+
+    def get_voltage_limit(self) -> bytes:
+        return self._send_command_and_get_response("get_voltage_limit")
+
+    def get_current_limit(self) -> bytes:
+        return self._send_command_and_get_response("get_current_limit")
+
+    def get_on_off_status(self) -> bytes:
+        return self._send_command_and_get_response("get_on_off_status")
 
     def _send_command_with_value(self, cmd: str, val: int):
         cmd_bytes = bytes.fromhex(cmd)
@@ -83,19 +85,15 @@ class PSU:
         self._send_bytes(cmd_bytes + val_bytes)
 
     def set_output_voltage(self, v: float):
-        command = "ff ff 04 07"
         centivolt = int(v * 100)
-        self._send_command_with_value(command, centivolt)
+        self._send_command_with_value(self.__commands['set_output_voltage'], centivolt)
 
     def set_output_current(self, mA: int):
-        command = "ff ff 04 08"
-        self._send_command_with_value(command, mA)
+        self._send_command_with_value(self.__commands['set_output_current'], mA)
 
     def set_ovp_limit(self, v: float):
-        command = "ff ff 04 17"
         centivolt = int(v * 100)
-        self._send_command_with_value(command, centivolt)
+        self._send_command_with_value(self.__commands['set_ovp_limit'], centivolt)
 
     def set_ocp_limit(self, mA: int):
-        command = "ff ff 04 18"
-        self._send_command_with_value(command, mA)
+        self._send_command_with_value(self.__commands['set_ocp_limit'], mA)
