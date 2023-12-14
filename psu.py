@@ -79,21 +79,22 @@ class PSU:
     def get_on_off_status(self) -> bytes:
         return self._send_command_and_get_response("get_on_off_status")
 
-    def _send_command_with_value(self, cmd: str, val: int):
-        cmd_bytes = bytes.fromhex(cmd)
+    def _send_command_with_value(self, command: str, val: int):
+        hex_command = self.__commands[command]
+        cmd_bytes = bytes.fromhex(hex_command)
         val_bytes = val.to_bytes(2, byteorder='little')
         self._send_bytes(cmd_bytes + val_bytes)
 
     def set_output_voltage(self, v: float):
         centivolt = int(v * 100)
-        self._send_command_with_value(self.__commands['set_output_voltage'], centivolt)
+        self._send_command_with_value('set_output_voltage', centivolt)
 
     def set_output_current(self, mA: int):
-        self._send_command_with_value(self.__commands['set_output_current'], mA)
+        self._send_command_with_value('set_output_current', mA)
 
     def set_ovp_limit(self, v: float):
         centivolt = int(v * 100)
-        self._send_command_with_value(self.__commands['set_ovp_limit'], centivolt)
+        self._send_command_with_value('set_ovp_limit', centivolt)
 
     def set_ocp_limit(self, mA: int):
-        self._send_command_with_value(self.__commands['set_ocp_limit'], mA)
+        self._send_command_with_value('set_ocp_limit', mA)
