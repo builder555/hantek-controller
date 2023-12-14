@@ -1,5 +1,6 @@
 from serial import Serial
 
+
 class PSU:
     def __init__(self, port: str = "/dev/ttyUSB0", baudrate: int = 2400):
         self.__port = port
@@ -20,7 +21,7 @@ class PSU:
             "set_output_voltage": "ff ff 04 07",
             "set_output_current": "ff ff 04 08",
             "set_ovp_limit": "ff ff 04 17",
-            "set_ocp_limit": "ff ff 04 18"
+            "set_ocp_limit": "ff ff 04 18",
         }
 
     def _send_bytes(self, byte_data: bytes):
@@ -32,12 +33,12 @@ class PSU:
             ser.write(byte_data)
             resp = ser.readline()
         return resp
-    
+
     def _send_command(self, command: str):
         hex_command = self.__commands[command]
         byte_data = bytes.fromhex(hex_command)
         self._send_bytes(byte_data)
-    
+
     def _send_command_and_get_response(self, command: str) -> bytes:
         hex_command = self.__commands[command]
         byte_data = bytes.fromhex(hex_command)
@@ -50,16 +51,16 @@ class PSU:
         self._send_command("turn_off")
 
     def ocp_on(self):
-        self._send_command('ocp_on')
-        
+        self._send_command("ocp_on")
+
     def ocp_off(self):
-        self._send_command('ocp_off')
+        self._send_command("ocp_off")
 
     def ovp_on(self):
-        self._send_command('ovp_on')
-    
+        self._send_command("ovp_on")
+
     def ovp_off(self):
-        self._send_command('ovp_off')
+        self._send_command("ovp_off")
 
     def get_model(self) -> str:
         return self._send_command_and_get_response("get_model").decode()
@@ -87,19 +88,19 @@ class PSU:
     def _send_command_with_value(self, command: str, val: int):
         hex_command = self.__commands[command]
         cmd_bytes = bytes.fromhex(hex_command)
-        val_bytes = val.to_bytes(2, byteorder='little')
+        val_bytes = val.to_bytes(2, byteorder="little")
         self._send_bytes(cmd_bytes + val_bytes)
 
     def set_output_voltage(self, v: float):
         centivolt = int(v * 100)
-        self._send_command_with_value('set_output_voltage', centivolt)
+        self._send_command_with_value("set_output_voltage", centivolt)
 
     def set_output_current(self, mA: int):
-        self._send_command_with_value('set_output_current', mA)
+        self._send_command_with_value("set_output_current", mA)
 
     def set_ovp_limit(self, v: float):
         centivolt = int(v * 100)
-        self._send_command_with_value('set_ovp_limit', centivolt)
+        self._send_command_with_value("set_ovp_limit", centivolt)
 
     def set_ocp_limit(self, mA: int):
-        self._send_command_with_value('set_ocp_limit', mA)
+        self._send_command_with_value("set_ocp_limit", mA)
