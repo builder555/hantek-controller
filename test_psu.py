@@ -40,22 +40,22 @@ def psu(mocked_serial):
         yield PSU()
 
 def test_get_model_number(psu):
-    assert psu.get_model() == FAKE_MODEL_NUMBER.encode()
+    assert psu.get_model() == FAKE_MODEL_NUMBER
 
 def test_get_active_voltage(psu):
-    assert psu.get_active_voltage() == b'330'
+    assert psu.get_active_voltage() == 3.3
 
-def test_get_active_current(psu):
-    assert psu.get_active_current() == b'250'
+def test_get_active_current_in_milliamps(psu):
+    assert psu.get_active_current() == 250
 
 def test_get_voltage_limit(psu):
-    assert psu.get_voltage_limit() == b'500'
+    assert psu.get_voltage_limit() == 5.0
 
-def test_get_current_limit(psu):
-    assert psu.get_current_limit() == b'1000'
+def test_get_current_limit_in_milliamps(psu):
+    assert psu.get_current_limit() == 1000
 
 def test_get_on_off_status(psu):
-    assert psu.get_on_off_status() == b'1'
+    assert psu.get_on_off_status() == True
 
 def test_turn_on(psu, mocked_serial):
     psu.turn_on()

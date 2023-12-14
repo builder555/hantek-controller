@@ -61,23 +61,28 @@ class PSU:
     def ovp_off(self):
         self._send_command('ovp_off')
 
-    def get_model(self) -> bytes:
-        return self._send_command_and_get_response("get_model")
+    def get_model(self) -> str:
+        return self._send_command_and_get_response("get_model").decode()
 
-    def get_active_voltage(self) -> bytes:
-        return self._send_command_and_get_response("get_active_voltage")
+    def get_active_voltage(self) -> float:
+        centivolts = self._send_command_and_get_response("get_active_voltage")
+        return int(centivolts.decode()) / 100
 
-    def get_active_current(self) -> bytes:
-        return self._send_command_and_get_response("get_active_current")
+    def get_active_current(self) -> int:
+        milliamps = self._send_command_and_get_response("get_active_current")
+        return int(milliamps.decode())
 
-    def get_voltage_limit(self) -> bytes:
-        return self._send_command_and_get_response("get_voltage_limit")
+    def get_voltage_limit(self) -> float:
+        cantivolts = self._send_command_and_get_response("get_voltage_limit")
+        return int(cantivolts.decode()) / 100
 
-    def get_current_limit(self) -> bytes:
-        return self._send_command_and_get_response("get_current_limit")
+    def get_current_limit(self) -> int:
+        milliamps = self._send_command_and_get_response("get_current_limit")
+        return int(milliamps.decode())
 
-    def get_on_off_status(self) -> bytes:
-        return self._send_command_and_get_response("get_on_off_status")
+    def get_on_off_status(self) -> bool:
+        status = self._send_command_and_get_response("get_on_off_status")
+        return bool(int(status.decode()))
 
     def _send_command_with_value(self, command: str, val: int):
         hex_command = self.__commands[command]
