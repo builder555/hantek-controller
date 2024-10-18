@@ -1,6 +1,6 @@
 # Hantek Power Supply Controller
 
-<img src="https://github.com/builder555/hantek-controller/blob/master/psu.jpg?raw=true" style="float:right; height: 200px">
+<img src="https://github.com/builder555/hantek-controller/blob/master/psu.jpg?raw=true" align="right" style="float:right; height: 200px">
 
 This is an interface to the serial port on [Hantek HDP1160V4S](http://www.hantek.com/products/detail/18193) power supply. It should work with other HDP10000-series power supplies. [buy](https://s.click.aliexpress.com/e/_DCkHtB1)
 
@@ -13,7 +13,8 @@ USING THIS CODE MAY DAMAGE YOUR POWER SUPPLY OR CONNECTED DEVICES. USE AT YOUR O
 ###
 
 To communicate with the PSU I am using [USB-to-RS232](https://s.click.aliexpress.com/e/_DCOVD2J) adapter - does not require any drivers on debian linux.
-<br clear="right">
+
+<br clear="both"/>
 
 ## Usage
 
