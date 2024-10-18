@@ -47,7 +47,7 @@ p = PSU(port='/dev/ttyUSB0', baudrate=2400)
 Set voltage to 12V and turn on the power supply:
 
 ```python
->>> from psu import PSU
+>>> from hantekpsu import PSU
 >>> p = PSU()
 >>> p.set_output_voltage(12.0)
 >>> p.turn_on()
