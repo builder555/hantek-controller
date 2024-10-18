@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+
+    - name: Run pytest
+      run: poetry run pytest
+
+    - name: Run flake8
+      run: poetry run flake8
+
+  semver-action:
+    needs: test-and-lint
+    outputs:
+      tag: ${{ steps.semver-action.outputs.tag }}
+      version: ${{ steps.semver-action.outputs.version }}
+      release_notes: ${{ steps.semver-action.outputs.release_notes }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Semver Action
+      id: semver-action
+      run: python .github/scripts/semver.py
+  
+  build-and-release:
+    needs: semver-action
+    runs-on: ubuntu-latest
+    if: needs.semver-action.outputs.version != ''
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Update pyproject.toml version
+      run: |
+        pip install poetry
+        poetry version ${{ needs.semver-action.outputs.version }}
+
+    - name: Commit version changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add pyproject.toml
+        git commit -m "chore: bump version to ${{ needs.semver-action.outputs.tag }}"
+        git tag ${{ needs.semver-action.outputs.tag }}
+    
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        tags: true
+
+    - name: Build package
+      run: poetry build
+    
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Create Release
+      id: create-release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ needs.semver-action.outputs.tag }}
+        body: ${{ needs.semver-action.outputs.release_notes }}
+        files: |
+          dist/*.whl
+          dist/*.tar.gz
+
+  publish-to-pypi:
+    name: >-
+      Publish Python 🐍 distribution 📦 to PyPI
+    if: needs.semver-action.outputs.version != ''
+    needs:
+    - build-and-release
+    - semver-action
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pinecil
+    permissions:
+      id-token: write
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
