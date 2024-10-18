@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hantekpsu"
-version = "0.1.1"
+version = "0.1.2"
 description = "Python interface for Hantek bench power supply"
 authors = ["builder555 <85308587+builder555@users.noreply.github.com>"]
 homepage = "https://github.com/builder555/hantek-controller"
