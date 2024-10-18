@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "hantekpsu"
+version = "0.1.0"
+description = "Python interface for Hantek bench power supply"
+authors = ["builder555 <85308587+builder555@users.noreply.github.com>"]
+license = "MIT-0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pyserial = "^3.5"
+pyserial-asyncio = "^0.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-watch = "^4.2.0"
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider"

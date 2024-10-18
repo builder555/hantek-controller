@@ -1,6 +1,6 @@
 from unittest.mock import patch, MagicMock
 import pytest
-from psu import PSU
+from hantekpsu import PSU
 
 FAKE_MODEL_NUMBER = "HDP1160V4S"
 FAKE_VOLTAGE = 3.3
@@ -47,7 +47,7 @@ def mocked_serial():
 
 @pytest.fixture
 def psu(mocked_serial):
-    with patch("psu.Serial", return_value=mocked_serial):
+    with patch("hantekpsu.psu.Serial", return_value=mocked_serial):
         yield PSU()
 
 

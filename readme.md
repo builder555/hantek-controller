@@ -52,7 +52,7 @@ Set voltage to 12V and turn on the power supply:
 ### Requirements
 
 * python 3.10+
-* pipenv
+* poetry
 
 Ensure the device is connected. If using usb-to-rs232 adapter, run `lsusb`:
 
@@ -70,8 +70,8 @@ To figure out which device it is, you can run  `ls /dev` before plugging in the 
 ```bash
 git clone https://github.com/builder555/hantek-controller
 cd hantek-controller
-export PIPENV_VENV_IN_PROJECT=true 
-pipenv install --dev
+poetry config virtualenvs.in-project true --local
+poetry install
 ```
 
 ### Unit Tests
@@ -79,7 +79,7 @@ pipenv install --dev
 When adding new features or modifying existing ones, make sure you add unit tests and run them:
 
 ```bash
-$ pipenv run test
+$ poetry run pytest -v
 
 test_psu.py::test_get_model_number PASSED                       [  6%]
 test_psu.py::test_get_active_voltage PASSED                     [ 12%]
@@ -104,5 +104,5 @@ test_psu.py::test_set_ocp PASSED                                [100%]
 You can also run pytest-watch while developing to run tests automatically on save:
 
 ```bash
-pipenv run watch
+pipenv run ptw --runner 'pytest -v'
 ```
