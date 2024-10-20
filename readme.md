@@ -1,3 +1,5 @@
+![test-and-lint](https://github.com/builder555/hantek-controller/actions/workflows/ci.yml/badge.svg)
+
 # Hantek Power Supply Controller
 
 <img src="https://github.com/builder555/hantek-controller/blob/master/psu.jpg?raw=true" align="right" style="float:right; height: 200px">
@@ -16,9 +18,14 @@ To communicate with the PSU I am using [USB-to-RS232](https://s.click.aliexpress
 
 <br clear="both"/>
 
+## Installation
+
+`pip install hantekpsu`
+
 ## Usage
 
 ```python
+from hantekpsu import PSU
 p = PSU(port='/dev/ttyUSB0', baudrate=2400)
 ```
 
@@ -110,5 +117,5 @@ test_psu.py::test_set_ocp PASSED                                [100%]
 You can also run pytest-watch while developing to run tests automatically on save:
 
 ```bash
-pipenv run ptw --runner 'pytest -v'
+poetry run ptw --runner 'pytest -v'
 ```
