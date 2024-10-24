@@ -55,37 +55,29 @@ def get_commit_messages(since_tag: str):
     return subprocess.check_output(command).strip().decode().split("\n")
 
 
-def parse_commits(commits: list[str]) -> tuple[ReleaseNotes, dict[str, int]]:
+def parse_commits(
+    commits: list[str], last_tag: str = "0.0.0"
+) -> tuple[ReleaseNotes, str]:
     notes = ReleaseNotes()
-    version_bump = {"major": 0, "minor": 0, "patch": 0}
+    major, minor, patch = [int(v.strip()) for v in last_tag.strip("v").split(".")]
 
     for commit in commits:
         if commit.startswith("fix!") or commit.startswith("feat!"):
-            version_bump["major"] += 1
-            version_bump["minor"] = 0
-            version_bump["patch"] = 0
+            major += 1
+            minor = 0
+            patch = 0
             notes.add_breaking(commit)
         elif commit.startswith("fix:"):
-            version_bump["patch"] += 1
+            patch += 1
             notes.add_fixes(commit)
         elif commit.startswith("feat:"):
-            version_bump["minor"] += 1
-            version_bump["patch"] = 0
+            minor += 1
+            patch = 0
             notes.add_features(commit)
         else:
             notes.add_other(commit)
 
-    return notes, version_bump
-
-
-def increment_version(last_version: str, version_bump: dict[str, int]):
-    if not last_version:
-        last_version = "0.0.0"
-    major, minor, patch = [int(v.strip()) for v in last_version.strip("v").split(".")]
-    major += version_bump["major"]
-    minor += version_bump["minor"]
-    patch += version_bump["patch"]
-    return f"{major}.{minor}.{patch}"
+    return notes, f"{major}.{minor}.{patch}"
 
 
 def set_output(name, value):
@@ -98,12 +90,11 @@ def set_output(name, value):
 
 def main():
     last_tag = get_last_tag()
-    commits = get_commit_messages(last_tag)
-    release_notes, version_bump = parse_commits(commits)
-    if not (version_bump["major"] or version_bump["minor"] or version_bump["patch"]):
+    commits = get_commit_messages(since_tag=last_tag)
+    release_notes, new_version = parse_commits(commits, last_tag)
+    if last_tag == new_version:
         print("No new release")
         return
-    new_version = increment_version(last_tag, version_bump)
     set_output("tag", f"v{new_version}")
     set_output("version", new_version)
     set_output("release_notes", release_notes)
