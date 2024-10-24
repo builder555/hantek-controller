@@ -2,7 +2,13 @@ from serial import Serial
 
 
 class PSU:
-    def __init__(self, port: str = "/dev/ttyUSB0", baudrate: int = 2400):
+    def __init__(
+        self,
+        port: str = "/dev/ttyUSB0",
+        baudrate: int = 2400,
+        serial_class: type[Serial] = Serial,
+    ):
+        self.__Serial = serial_class
         self.__port = port
         self.__baudrate = baudrate
         self.__commands = {
@@ -25,11 +31,11 @@ class PSU:
         }
 
     def _send_bytes(self, byte_data: bytes):
-        with Serial(self.__port, self.__baudrate, timeout=1) as ser:
+        with self.__Serial(self.__port, self.__baudrate, timeout=1) as ser:
             ser.write(byte_data)
 
     def _send_bytes_with_response(self, byte_data: bytes) -> bytes:
-        with Serial(self.__port, self.__baudrate, timeout=1) as ser:
+        with self.__Serial(self.__port, self.__baudrate, timeout=1) as ser:
             ser.write(byte_data)
             resp = ser.readline()
         return resp

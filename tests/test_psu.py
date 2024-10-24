@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 import pytest
 from hantekpsu import PSU
 
@@ -47,8 +47,17 @@ def mocked_serial():
 
 @pytest.fixture
 def psu(mocked_serial):
-    with patch("hantekpsu.psu.Serial", return_value=mocked_serial):
-        yield PSU()
+    class DummySerial:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def __enter__(self):
+            return mocked_serial
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    yield PSU(serial_class=DummySerial)  # type: ignore
 
 
 def test_get_model_number(psu):
