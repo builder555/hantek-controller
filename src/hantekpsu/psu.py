@@ -7,10 +7,12 @@ class PSU:
         port: str = "/dev/ttyUSB0",
         baudrate: int = 2400,
         serial_class: type[Serial] = Serial,
+        timeout=0.04,
     ):
         self.__Serial = serial_class
         self.__port = port
         self.__baudrate = baudrate
+        self.__timeout = timeout
         self.__commands = {
             "turn_on": "ff ff 03 06 01",
             "turn_off": "ff ff 03 06 00",
@@ -31,11 +33,11 @@ class PSU:
         }
 
     def _send_bytes(self, byte_data: bytes):
-        with self.__Serial(self.__port, self.__baudrate, timeout=0.04) as ser:
+        with self.__Serial(self.__port, self.__baudrate, timeout=self.__timeout) as ser:
             ser.write(byte_data)
 
     def _send_bytes_with_response(self, byte_data: bytes) -> bytes:
-        with self.__Serial(self.__port, self.__baudrate, timeout=0.04) as ser:
+        with self.__Serial(self.__port, self.__baudrate, timeout=self.__timeout) as ser:
             ser.write(byte_data)
             resp = ser.readline()
         return resp
