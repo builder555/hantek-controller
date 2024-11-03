@@ -31,11 +31,11 @@ class PSU:
         }
 
     def _send_bytes(self, byte_data: bytes):
-        with self.__Serial(self.__port, self.__baudrate, timeout=1) as ser:
+        with self.__Serial(self.__port, self.__baudrate, timeout=0.01) as ser:
             ser.write(byte_data)
 
     def _send_bytes_with_response(self, byte_data: bytes) -> bytes:
-        with self.__Serial(self.__port, self.__baudrate, timeout=1) as ser:
+        with self.__Serial(self.__port, self.__baudrate, timeout=0.01) as ser:
             ser.write(byte_data)
             resp = ser.readline()
         return resp
