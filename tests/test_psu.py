@@ -1,4 +1,6 @@
 from unittest.mock import MagicMock
+from serial import Serial
+from typing import cast
 import pytest
 from hantekpsu import PSU
 
@@ -11,8 +13,8 @@ FAKE_ON_STATUS = True
 
 
 @pytest.fixture
-def mocked_serial():
-    class MockSerial:
+def fake_serial():
+    class FakeSerial:
         def __init__(self, *args, **kwargs):
             self.__written = b""
             self.write = MagicMock(side_effect=self._write)
@@ -42,22 +44,22 @@ def mocked_serial():
         def __exit__(self, exc_type, exc_val, exc_tb):
             pass
 
-    return MockSerial()
+    return FakeSerial()
 
 
 @pytest.fixture
-def psu(mocked_serial):
-    class DummySerial:
+def psu(fake_serial):
+    class FakeSerialClass:
         def __init__(self, *args, **kwargs):
             pass
 
         def __enter__(self):
-            return mocked_serial
+            return fake_serial
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             pass
 
-    yield PSU(serial_class=DummySerial)  # type: ignore
+    yield PSU(serial_class=FakeSerialClass)  # type: ignore
 
 
 def test_get_model_number(psu):
@@ -84,51 +86,76 @@ def test_get_on_off_status(psu):
     assert psu.get_on_off_status() == FAKE_ON_STATUS
 
 
-def test_turn_on(psu, mocked_serial):
+def test_turn_on(psu, fake_serial):
     psu.turn_on()
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 03 06 01"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 03 06 01"))
 
 
-def test_turn_off(psu, mocked_serial):
+def test_turn_off(psu, fake_serial):
     psu.turn_off()
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 03 06 00"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 03 06 00"))
 
 
-def test_ocp_on(psu, mocked_serial):
+def test_ocp_on(psu, fake_serial):
     psu.ocp_on()
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 03 1a 01"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 03 1a 01"))
 
 
-def test_ocp_off(psu, mocked_serial):
+def test_ocp_off(psu, fake_serial):
     psu.ocp_off()
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 03 1a 00"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 03 1a 00"))
 
 
-def test_ovp_on(psu, mocked_serial):
+def test_ovp_on(psu, fake_serial):
     psu.ovp_on()
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 03 19 01"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 03 19 01"))
 
 
-def test_ovp_off(psu, mocked_serial):
+def test_ovp_off(psu, fake_serial):
     psu.ovp_off()
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 03 19 00"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 03 19 00"))
 
 
-def test_set_voltage(psu, mocked_serial):
+def test_set_voltage(psu, fake_serial):
     psu.set_output_voltage(3.3)
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 04 07 4a 01"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 04 07 4a 01"))
 
 
-def test_set_current(psu, mocked_serial):
+def test_set_current(psu, fake_serial):
     psu.set_output_current(100)
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 04 08 64 00"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 04 08 64 00"))
 
 
-def test_set_ovp(psu, mocked_serial):
+def test_set_ovp(psu, fake_serial):
     psu.set_ovp_limit(15.5)
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 04 17 0e 06"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 04 17 0e 06"))
 
 
-def test_set_ocp(psu, mocked_serial):
+def test_set_ocp(psu, fake_serial):
     psu.set_ocp_limit(250)
-    mocked_serial.write.assert_called_with(bytes.fromhex("ff ff 04 18 fa 00"))
+    fake_serial.write.assert_called_with(bytes.fromhex("ff ff 04 18 fa 00"))
+
+
+@pytest.fixture
+def mocked_serial_class():
+    mocked_serial = MagicMock(spec=Serial)
+    mocked_class = cast(type[Serial], mocked_serial)
+    return mocked_class
+
+
+def test_custom_baudrate_is_set_correctly_on_serial(mocked_serial_class):
+    psu = PSU(serial_class=mocked_serial_class, baudrate=115200)
+    psu.turn_on()
+    assert mocked_serial_class.call_args_list[0].kwargs["baudrate"] == 115200
+
+
+def test_custom_timeout_is_set_correctly_on_serial(mocked_serial_class):
+    psu = PSU(serial_class=mocked_serial_class, timeout=0.9191)
+    psu.turn_on()
+    assert mocked_serial_class.call_args_list[0].kwargs["timeout"] == 0.9191
+
+
+def test_custom_port_is_set_correctly_on_serial(mocked_serial_class):
+    psu = PSU(serial_class=mocked_serial_class, port="/dev/ttyUSB123")
+    psu.turn_on()
+    assert mocked_serial_class.call_args_list[0].kwargs["port"] == "/dev/ttyUSB123"
